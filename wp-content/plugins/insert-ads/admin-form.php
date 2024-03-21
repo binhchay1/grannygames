@@ -82,7 +82,7 @@ class Admin_Form
             jQuery.post("' . $link . '", 
                         {
                             "action": "save_insert_ads",
-                            "dataType": "json",
+                            "type": "html",
                             "data": result,
                             "nonce": "' . $nonce . '"
                         }, 
@@ -105,13 +105,9 @@ class Admin_Form
         }
 
         $data = $_REQUEST['data'];
-        $insertAdsGamePlay = get_option('insert_ads_game_play');
+        $string = str_replace('\"', '"', $data);
 
-        if ($insertAdsGamePlay == false) {
-            add_option('insert_ads_game_play', htmlentities($data));
-        } else {
-            update_option('insert_ads_game_play', htmlentities($data));
-        }
+        update_option('insert_ads_game_play', htmlentities($string));
 
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             echo 'success';
