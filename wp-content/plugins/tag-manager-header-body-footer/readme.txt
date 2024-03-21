@@ -3,7 +3,7 @@ Contributors: YYDevelopment
 Tags: Tag Manager, Analytics, Pixel, Header, Footer, Body, Add Code, Insert Code, Code Injection
 Requires at least: 4
 Tested up to: 6.3
-Stable tag: 3.4.1
+Stable tag: 3.5.0
 Requires PHP: 5.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -34,7 +34,16 @@ This plugin will also allow you to insert meta tags to your website header and e
 * Google Analytics
 * Google Adsense
 * Facebook Pixels
+* Yandex Metrika
 * Any other website that require code injection.
+
+#### Tags LazyLoad Support
+
+* GTM Lazy Load
+* Google Analytics Lazy Load
+* Facebook Pixel Load
+* Yandex Metrika Lazy Load
+* Lazy Load For Custom Javascript Codes
 
 #### Supported Plugin Actions
 

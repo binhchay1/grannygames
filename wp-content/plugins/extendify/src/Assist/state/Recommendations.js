@@ -1,6 +1,6 @@
+import apiFetch from '@wordpress/api-fetch';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getRecommendationData, saveRecommendationData } from '../api/Data';
 
 const key = 'extendify-assist-recommendations';
 const startingState = {
@@ -42,10 +42,11 @@ const state = (set, get) => ({
 	},
 });
 
+const path = '/extendify/v1/assist/recommendations-data';
 const storage = {
-	getItem: async () => JSON.stringify(await getRecommendationData()),
-	setItem: async (_, value) => await saveRecommendationData(value),
-	removeItem: () => undefined,
+	getItem: async () => await apiFetch({ path }),
+	setItem: async (_name, state) =>
+		await apiFetch({ path, method: 'POST', data: { state } }),
 };
 
 export const useRecommendationsStore = create(

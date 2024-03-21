@@ -4,7 +4,7 @@
 Plugin Name: YYDevelopment - Tag Manager - Header, Body And Footer
 Plugin URI:  https://www.yydevelopment.com/yydevelopment-wordpress-plugins/
 Description: Simple plugin that allow you add head, body and footer codes for google tag manager, analytics & facebook pixel codes.
-Version:     3.4.1
+Version:     3.5.0
 Author:      YYDevelopment
 Author URI:  https://www.yydevelopment.com/
 Text Domain: tag-manager-header-body-footer
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', 'tag_manager_header_body_footer_languages' );
 // update the database on plugin update
 // ================================================
 
-$yydev_tag_manager_data_plugin_version = '3.1.4'; // plugin version
+$yydev_tag_manager_data_plugin_version = '3.5.0'; // plugin version
 $yydev_tag_manager_data_slug_name = 'yydev_tag_manager_version'; // the name we save on the wp_options database
 $db_plugin_version = get_option($yydev_tag_manager_data_slug_name);
 

@@ -52,6 +52,7 @@ $lazy_load_time = 5000;
 $google_analytics_id = '';
 $yandex_metrika_id = '';
 $facebook_pixel_id = '';
+$google_tag_manager_id = '';
 
 $custom_lazy_load_js = '';
 $remove_custom_lazy_load_js_on_elementor = 0;
@@ -90,6 +91,7 @@ $plugin_data_array = array(
     'google_analytics_id' => $google_analytics_id,
     'yandex_metrika_id' => $yandex_metrika_id,
     'facebook_pixel_id' => $facebook_pixel_id,
+    'google_tag_manager_id' => $google_tag_manager_id,
 
     'custom_lazy_load_js' => $custom_lazy_load_js,
     'remove_custom_lazy_load_js_on_elementor' => $remove_custom_lazy_load_js_on_elementor,

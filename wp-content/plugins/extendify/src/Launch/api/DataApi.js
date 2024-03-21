@@ -1,11 +1,7 @@
-import { useUserSelectionStore } from '@launch/state/UserSelections';
+import { useUserSelectionStore } from '@launch/state/user-selections';
 import { PATTERNS_HOST, AI_HOST } from '../../constants';
 import { getHeadersAndFooters } from './WPApi';
 import { Axios as api } from './axios';
-
-export const getUserSelectionData = () => api.get('launch/user-selection-data');
-export const saveUserSelectionData = (data) =>
-	api.post('launch/user-selection-data', { data });
 
 const fetchTemplates = async (type, siteType) => {
 	const { wpLanguage, wpVersion, showLocalizedCopy } = window.extOnbData;
@@ -77,11 +73,29 @@ export const getSuggestedPlugins = async () => {
 	return suggested.data;
 };
 
-export const getPagePatternsGeneratedByAI = async (page, userState) => {
+// Optionally add items to request body
+const allowList = [
+	'partnerId',
+	'devbuild',
+	'version',
+	'siteId',
+	'wpLanguage',
+	'wpVersion',
+];
+const extraBody = {
+	...Object.fromEntries(
+		Object.entries(window.extOnbData).filter(([key]) =>
+			allowList.includes(key),
+		),
+	),
+};
+
+export const generateCustomPatterns = async (page, userState) => {
 	const res = await fetch(`${AI_HOST}/api/patterns`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
+			...extraBody,
 			page,
 			userState,
 		}),

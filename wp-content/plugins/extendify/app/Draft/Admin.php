@@ -82,12 +82,6 @@ class Admin
 
                 $version = Config::$environment === 'PRODUCTION' ? Config::$version : uniqid();
 
-                $cssColorVars = PartnerData::cssVariableMapping();
-                $cssString = implode('; ', array_map(function ($k, $v) {
-                    return "$k: $v";
-                }, array_keys($cssColorVars), $cssColorVars));
-                wp_add_inline_style(Config::$slug . '-draft-styles', "body { $cssString; }");
-
                 \wp_enqueue_style(
                     Config::$slug . '-draft-styles',
                     EXTENDIFY_BASE_URL . 'public/build/' . Config::$assetManifest['extendify-draft.css'],
@@ -199,6 +193,7 @@ class Admin
                 'consentTermsUrl' => isset($data['consentTermsUrl']) ? $data['consentTermsUrl'] : '',
                 'userId' => \get_current_user_id(),
                 'userGaveConsent' => $userGaveConsent,
+                'wpLanguage' => \get_locale(),
                 'globalState' => \get_option('extendify_draft_settings', [
                     'state' => [],
                     'version' => 0,

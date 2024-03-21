@@ -1,8 +1,7 @@
+import apiFetch from '@wordpress/api-fetch';
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
-import { getTaskData, saveTaskData } from '@assist/api/Data';
 
-const key = 'extendify-assist-tasks';
 const startingState = {
 	// These are tests the user is in progress of completing.
 	// Not to be confused with tasks that are in progress.
@@ -16,6 +15,10 @@ const startingState = {
 	// so use ?.completedAt to check if it's completed with the (.?)
 	completedTasks: [],
 	inProgressTasks: [],
+	// These are the tasks dependencies
+	tasksDependencies: {
+		...(window.extAssistData.userData?.tasksDependencies || {}),
+	},
 	// initialize the state with default values
 	...((window.extAssistData.userData.taskData?.data || {})?.state ?? {}),
 };
@@ -23,7 +26,16 @@ const startingState = {
 const state = (set, get) => ({
 	...startingState,
 	isCompleted(taskId) {
-		return get().completedTasks.some((task) => task?.id === taskId);
+		const completed = get().completedTasks.some((task) => task?.id === taskId);
+
+		// overrides for specific plugin "behind the scenes" tasks
+		const { completedWoocommerceStore, completedSetupGivewp } =
+			get().tasksDependencies || {};
+		if (taskId === 'setup-givewp') return completedSetupGivewp || completed;
+		if (taskId === 'setup-woocommerce-store')
+			return completedWoocommerceStore || completed;
+
+		return completed;
 	},
 	completeTask(taskId) {
 		if (get().isCompleted(taskId)) {
@@ -88,15 +100,15 @@ const state = (set, get) => ({
 	},
 });
 
+const path = '/extendify/v1/assist/task-data';
 const storage = {
-	getItem: async () => JSON.stringify(await getTaskData()),
-	setItem: async (_, value) => await saveTaskData(value),
-	removeItem: () => undefined,
+	getItem: async () => await apiFetch({ path }),
+	setItem: async (_name, state) =>
+		await apiFetch({ path, method: 'POST', data: { state } }),
 };
 
 export const useTasksStore = create(
 	persist(devtools(state, { name: 'Extendify Assist Tasks' }), {
-		name: key,
 		storage: createJSONStorage(() => storage),
 		skipHydration: true,
 	}),

@@ -150,6 +150,7 @@ if( isset($_POST['yydev_tagmanager_nonce']) ) {
         $google_analytics_id = sanitize_text_field( $_POST['google_analytics_id'] );
         $yandex_metrika_id = sanitize_text_field( $_POST['yandex_metrika_id'] );
         $facebook_pixel_id = sanitize_text_field( $_POST['facebook_pixel_id'] );
+        $google_tag_manager_id = sanitize_text_field( $_POST['google_tag_manager_id'] );
 
         $remove_custom_lazy_load_js_on_elementor = yydev_tagmanager_checkbox_isset('remove_custom_lazy_load_js_on_elementor');
 
@@ -233,7 +234,8 @@ if( isset($_POST['yydev_tagmanager_nonce']) ) {
             'google_analytics_id' => $google_analytics_id,
             'yandex_metrika_id' => $yandex_metrika_id,
             'facebook_pixel_id' => $facebook_pixel_id,
-            
+            'google_tag_manager_id' => $google_tag_manager_id,
+
             'custom_lazy_load_js' => $custom_lazy_load_js,
             'remove_custom_lazy_load_js_on_elementor' => $remove_custom_lazy_load_js_on_elementor,
 
@@ -461,6 +463,12 @@ if( isset($_POST['yydev_tagmanager_nonce']) ) {
 
             </div><!--tag-manager-line-->
 
+            <div class="tag-manager-line">
+
+                <label for="google_tag_manager_id"><strong><?php _e("Google Tag Manager ID:", 'tag-manager-header-body-footer'); ?> </strong></label><br />
+                <input type="text" id="google_tag_manager_id" class="input-short" name="google_tag_manager_id" placeholder="GTM-SSSSSSS" value="<?php echo sanitize_text_field($plugin_data_array['google_tag_manager_id']); ?>" />
+
+            </div><!--tag-manager-line-->
 
             <div class="tag-manager-line">
 

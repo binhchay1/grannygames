@@ -60,15 +60,16 @@ if($tagmanager_content_output > 0) {
 
 } // if($tagmanager_content_output > 0) {
 
-// ====================================================
+// ===========================================================================================
 // Getting lazy loading tags and add them to the head
-// ====================================================
+// ===========================================================================================
 
     $plugin_data_array = yydev_tagmanager_get_plugin_settings($wp_options_name);
 
     $yy_google_analytics_id = sanitize_text_field($plugin_data_array['google_analytics_id']);
     $yandex_metrika_id = sanitize_text_field($plugin_data_array['yandex_metrika_id']);
     $facebook_pixel_id = sanitize_text_field($plugin_data_array['facebook_pixel_id']);
+    $google_tag_manager_id = sanitize_text_field($plugin_data_array['google_tag_manager_id']);
 
     $custom_lazy_load_js = $plugin_data_array['custom_lazy_load_js'];
     $remove_custom_lazy_load_js_on_elementor = intval($plugin_data_array['remove_custom_lazy_load_js_on_elementor']);
@@ -80,13 +81,14 @@ if($tagmanager_content_output > 0) {
     // Starting with google analytics
     // -------------------------------------
 
-        $add_lazyload_code = "";
+        $header_lazyload_code = "";
+        $body_lazyload_code = "";
 
         if( !empty($yy_google_analytics_id) ||  !empty($yandex_metrika_id) ) {
 
-            $add_lazyload_code .= "<script>";
+            $header_lazyload_code .= "<script>";
 
-            	$add_lazyload_code .= "function yydev_tagmanager_js_lazy_load() {";
+            	$header_lazyload_code .= "function yydev_tagmanager_js_lazy_load() {";
 
                     // -------------------------------------
                     // getting the analytics code output
@@ -94,15 +96,15 @@ if($tagmanager_content_output > 0) {
 
                     if( !empty($yy_google_analytics_id) ) {
  
-                        $add_lazyload_code .= "var YY_analytics_TAG = document.createElement('script');";
-                        $add_lazyload_code .= "YY_analytics_TAG.src = 'https://www.googletagmanager.com/gtag/js?id=" . $yy_google_analytics_id . "';";
-                        $add_lazyload_code .= "var first_analytics_ScriptTag = document.getElementsByTagName('script')[0];";
-                        $add_lazyload_code .= "first_analytics_ScriptTag.parentNode.insertBefore(YY_analytics_TAG, first_analytics_ScriptTag);";
+                        $header_lazyload_code .= "var YY_analytics_TAG = document.createElement('script');";
+                        $header_lazyload_code .= "YY_analytics_TAG.src = 'https://www.googletagmanager.com/gtag/js?id=" . $yy_google_analytics_id . "';";
+                        $header_lazyload_code .= "var first_analytics_ScriptTag = document.getElementsByTagName('script')[0];";
+                        $header_lazyload_code .= "first_analytics_ScriptTag.parentNode.insertBefore(YY_analytics_TAG, first_analytics_ScriptTag);";
 
-                        $add_lazyload_code .= "window.dataLayer = window.dataLayer || [];";
-                        $add_lazyload_code .= "function gtag(){dataLayer.push(arguments);}";
-                        $add_lazyload_code .= "gtag('js', new Date());";
-                        $add_lazyload_code .= "gtag('config', '" . $yy_google_analytics_id . "');";
+                        $header_lazyload_code .= "window.dataLayer = window.dataLayer || [];";
+                        $header_lazyload_code .= "function gtag(){dataLayer.push(arguments);}";
+                        $header_lazyload_code .= "gtag('js', new Date());";
+                        $header_lazyload_code .= "gtag('config', '" . $yy_google_analytics_id . "');";
                         
                     } // if( !empty($yy_google_analytics_id) ) {
 
@@ -112,19 +114,34 @@ if($tagmanager_content_output > 0) {
 
                     if( !empty($facebook_pixel_id) ) {
 
-                        $add_lazyload_code .= "!function(f,b,e,v,n,t,s)";
-                        $add_lazyload_code .= "{if(f.fbq)return;n=f.fbq=function(){n.callMethod?";
-                        $add_lazyload_code .= "n.callMethod.apply(n,arguments):n.queue.push(arguments)};";
-                        $add_lazyload_code .= "if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';";
-                        $add_lazyload_code .= "n.queue=[];t=b.createElement(e);t.async=!0;";
-                        $add_lazyload_code .= "t.src=v;s=b.getElementsByTagName(e)[0];";
-                        $add_lazyload_code .= "s.parentNode.insertBefore(t,s)}(window, document,'script',";
-                        $add_lazyload_code .= "'https://connect.facebook.net/en_US/fbevents.js');";
+                        $header_lazyload_code .= "!function(f,b,e,v,n,t,s)";
+                        $header_lazyload_code .= "{if(f.fbq)return;n=f.fbq=function(){n.callMethod?";
+                        $header_lazyload_code .= "n.callMethod.apply(n,arguments):n.queue.push(arguments)};";
+                        $header_lazyload_code .= "if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';";
+                        $header_lazyload_code .= "n.queue=[];t=b.createElement(e);t.async=!0;";
+                        $header_lazyload_code .= "t.src=v;s=b.getElementsByTagName(e)[0];";
+                        $header_lazyload_code .= "s.parentNode.insertBefore(t,s)}(window, document,'script',";
+                        $header_lazyload_code .= "'https://connect.facebook.net/en_US/fbevents.js');";
 
-                        $add_lazyload_code .= "fbq('init', '" . $facebook_pixel_id . "');";
-                        $add_lazyload_code .= "fbq('track', 'PageView');";
+                        $header_lazyload_code .= "fbq('init', '" . $facebook_pixel_id . "');";
+                        $header_lazyload_code .= "fbq('track', 'PageView');";
 
                     } // if( !empty($facebook_pixel_id) ) {
+
+                    // -------------------------------------
+                    // getting the google tag manager output to the page
+                    // -------------------------------------
+
+                    if( !empty($google_tag_manager_id) ) {
+
+                        $header_lazyload_code .= "var gtmScript = document.createElement('script');";
+                        $header_lazyload_code .= "gtmScript.type = 'text/javascript';";
+                        $header_lazyload_code .= "gtmScript.async = true;";
+                        $header_lazyload_code .= "gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=" . $google_tag_manager_id . "';";
+                        $header_lazyload_code .= "var firstScript = document.getElementsByTagName('script')[0];";
+                        $header_lazyload_code .= "firstScript.parentNode.insertBefore(gtmScript, firstScript);";
+
+                    } // if( !empty($google_tag_manager_id) ) {
 
                     // -------------------------------------
                     // getting the yandex metrika code output
@@ -132,16 +149,16 @@ if($tagmanager_content_output > 0) {
 
                     if( !empty($yandex_metrika_id) ) {
                     
-                		$add_lazyload_code .= "(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};";
-                        $add_lazyload_code .= "m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})";
-                        $add_lazyload_code .= "(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');";
+                		$header_lazyload_code .= "(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};";
+                        $header_lazyload_code .= "m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})";
+                        $header_lazyload_code .= "(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');";
 
-                        $add_lazyload_code .= "ym(" . $yandex_metrika_id . ", 'init', {";
-                            $add_lazyload_code .= "clickmap:true,";
-                            $add_lazyload_code .= "trackLinks:true,";
-                            $add_lazyload_code .= "accurateTrackBounce:true,";
-                            $add_lazyload_code .= "webvisor:true";
-                        $add_lazyload_code .= "});";
+                        $header_lazyload_code .= "ym(" . $yandex_metrika_id . ", 'init', {";
+                            $header_lazyload_code .= "clickmap:true,";
+                            $header_lazyload_code .= "trackLinks:true,";
+                            $header_lazyload_code .= "accurateTrackBounce:true,";
+                            $header_lazyload_code .= "webvisor:true";
+                        $header_lazyload_code .= "});";
                         
                     } // if( !empty($yandex_metrika_id) ) {
 
@@ -171,7 +188,7 @@ if($tagmanager_content_output > 0) {
                                 $yydev_custom_lazy_load_data = implode("\n", $yydev_custom_lazy_load_data);
                                 $yydev_custom_lazy_load_data = stripslashes_deep($yydev_custom_lazy_load_data);
 
-                                $add_lazyload_code .= $yydev_custom_lazy_load_data;
+                                $header_lazyload_code .= $yydev_custom_lazy_load_data;
 
                             } // if( $output_custom_lazy_js == 1 ) {
 
@@ -181,72 +198,72 @@ if($tagmanager_content_output > 0) {
                     // stop the function from running again
                     // -------------------------------------
 
-                    $add_lazyload_code .= "yydev_tagmanager_stop = 1;";
+                    $header_lazyload_code .= "yydev_tagmanager_stop = 1;";
 
-            	$add_lazyload_code .= "}"; // // function youtube_replace_function() {
+            	$header_lazyload_code .= "}"; // // function youtube_replace_function() {
 
                 // -------------------------------------
                 // making sure to run the script once
                 // -------------------------------------
 
-        		$add_lazyload_code .= "var yydev_tagmanager_stop = 0;";
+        		$header_lazyload_code .= "var yydev_tagmanager_stop = 0;";
 
                 // -------------------------------------
                 // run the function after 5 sec from page loading
                 // -------------------------------------
                 
                 // run the function after 5 sec
-            	$add_lazyload_code .= "document.addEventListener('DOMContentLoaded', function(event) {";
-                		$add_lazyload_code .= "setTimeout(run_yydev_tagmanager_lazy_load, {lazy_load_time_replace});";
-            	$add_lazyload_code .= "});"; // document.addEventListener('DOMContentLoaded', function(event) {
+            	$header_lazyload_code .= "document.addEventListener('DOMContentLoaded', function(event) {";
+                		$header_lazyload_code .= "setTimeout(run_yydev_tagmanager_lazy_load, {lazy_load_time_replace});";
+            	$header_lazyload_code .= "});"; // document.addEventListener('DOMContentLoaded', function(event) {
 
                 // make sure the function didn't run on scroll and if it didn't run it now
-            	$add_lazyload_code .= "function run_yydev_tagmanager_lazy_load() {";
+            	$header_lazyload_code .= "function run_yydev_tagmanager_lazy_load() {";
 
-                    $add_lazyload_code .= "if(yydev_tagmanager_stop == 0) {";
-                        $add_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
-                    $add_lazyload_code .= "}"; // if(yydev_tagmanager_stop == 0) {
+                    $header_lazyload_code .= "if(yydev_tagmanager_stop == 0) {";
+                        $header_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
+                    $header_lazyload_code .= "}"; // if(yydev_tagmanager_stop == 0) {
 
-            	$add_lazyload_code .= "}"; // $add_lazyload_code .= "function run_yydev_tagmanager_lazy_load() {";
-
-                // -------------------------------------
-                // run the function as well when the user scroll in the first time
-                // -------------------------------------
-
-                $add_lazyload_code .= "window.addEventListener('scroll', function(e) {";
-
-            		$add_lazyload_code .= "if( this.scrollY > 10 && yydev_tagmanager_stop == 0) {";
-            		    	$add_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
-            		$add_lazyload_code .= "}"; // if( this.scrollY > 10 && yydev_tagmanager_stop == 0) {
-
-                $add_lazyload_code .= "});"; // window.addEventListener('scroll', function(e) {
+            	$header_lazyload_code .= "}"; // $header_lazyload_code .= "function run_yydev_tagmanager_lazy_load() {";
 
                 // -------------------------------------
                 // run the function as well when the user scroll in the first time
                 // -------------------------------------
 
-                $add_lazyload_code .= "document.addEventListener('DOMContentLoaded', function() {";
-                    $add_lazyload_code .= "document.body.addEventListener('mouseup', yydev_run_event_lazyload);";
-                    $add_lazyload_code .= "document.body.addEventListener('mousedown', yydev_run_event_lazyload);";
-                    $add_lazyload_code .= "document.body.addEventListener('click', yydev_run_event_lazyload);";
-                    $add_lazyload_code .= "document.body.addEventListener('mousemove', yydev_run_event_lazyload);";
-                    $add_lazyload_code .= "document.body.addEventListener('keypress', yydev_run_event_lazyload);";
-                $add_lazyload_code .= "});";
+                $header_lazyload_code .= "window.addEventListener('scroll', function(e) {";
 
-                $add_lazyload_code .= "function yydev_run_event_lazyload() {";
-                    $add_lazyload_code .= "if (typeof yydev_tagmanager_stop !== 'undefined' && yydev_tagmanager_stop === 0) {";
-                        $add_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
-                    $add_lazyload_code .= "}";
-                $add_lazyload_code .= "}";
+            		$header_lazyload_code .= "if( this.scrollY > 10 && yydev_tagmanager_stop == 0) {";
+            		    	$header_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
+            		$header_lazyload_code .= "}"; // if( this.scrollY > 10 && yydev_tagmanager_stop == 0) {
 
-            $add_lazyload_code .= "</script>";
+                $header_lazyload_code .= "});"; // window.addEventListener('scroll', function(e) {
+
+                // -------------------------------------
+                // run the function as well when the user scroll in the first time
+                // -------------------------------------
+
+                $header_lazyload_code .= "document.addEventListener('DOMContentLoaded', function() {";
+                    $header_lazyload_code .= "document.body.addEventListener('mouseup', yydev_run_event_lazyload);";
+                    $header_lazyload_code .= "document.body.addEventListener('mousedown', yydev_run_event_lazyload);";
+                    $header_lazyload_code .= "document.body.addEventListener('click', yydev_run_event_lazyload);";
+                    $header_lazyload_code .= "document.body.addEventListener('mousemove', yydev_run_event_lazyload);";
+                    $header_lazyload_code .= "document.body.addEventListener('keypress', yydev_run_event_lazyload);";
+                $header_lazyload_code .= "});";
+
+                $header_lazyload_code .= "function yydev_run_event_lazyload() {";
+                    $header_lazyload_code .= "if (typeof yydev_tagmanager_stop !== 'undefined' && yydev_tagmanager_stop === 0) {";
+                        $header_lazyload_code .= "yydev_tagmanager_js_lazy_load();";
+                    $header_lazyload_code .= "}";
+                $header_lazyload_code .= "}";
+
+            $header_lazyload_code .= "</script>";
 
             // -------------------------------------
             // adding noscript code of yandex
             // -------------------------------------
 
             if( !empty($yandex_metrika_id) ) {
-                $add_lazyload_code .= "<noscript><div><img src='https://mc.yandex.ru/watch/" . $yandex_metrika_id . "' style='position:absolute; left:-9999px;' alt='' /></div></noscript>";
+                $header_lazyload_code .= "<noscript><div><img src='https://mc.yandex.ru/watch/" . $yandex_metrika_id . "' style='position:absolute; left:-9999px;' alt='' /></div></noscript>";
             } // if( !empty($yandex_metrika_id) ) {
 
             // -------------------------------------
@@ -254,7 +271,7 @@ if($tagmanager_content_output > 0) {
             // -------------------------------------
 
             if( !empty($facebook_pixel_id) ) {
-                $add_lazyload_code .= "<noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=" . $facebook_pixel_id . "&ev=PageView&noscript=1' /></noscript>";
+                $header_lazyload_code .= "<noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=" . $facebook_pixel_id . "&ev=PageView&noscript=1' /></noscript>";
             } // if( !empty($facebook_pixel_id) ) {
 
         } // if( !empty($yy_google_analytics_id) ||  !empty($yandex_metrika_id) ) {
@@ -263,7 +280,7 @@ if($tagmanager_content_output > 0) {
     // Add the code into the header code
     // -------------------------------------
 
-    $yydev_tag_manager_head = $add_lazyload_code . $yydev_tag_manager_head;
+    $yydev_tag_manager_head = $header_lazyload_code . $yydev_tag_manager_head;
 
 // ====================================================
 // Adding the <head> tags
@@ -308,9 +325,31 @@ if(!empty($yydev_tag_manager_head)) {
 } // if(!empty($yydev_tag_manager_head)) {
 
 
+
+// ===========================================================================================
+// Getting lazy loading tags and add them to the after body tag
+// ===========================================================================================
+
+    // -------------------------------------
+    // getting the google tag manager to the body tag
+    // -------------------------------------
+
+    if( !empty($google_tag_manager_id) ) {
+        $body_lazyload_code .= "<!-- Google Tag Manager (noscript) -->";
+        $body_lazyload_code .= "<noscript><iframe src='https://www.googletagmanager.com/ns.html?id=" . $google_tag_manager_id . "'";
+        $body_lazyload_code .= "height='0' width='0' style='display:none;visibility:hidden'></iframe></noscript>";
+        $body_lazyload_code .= "<!-- End Google Tag Manager (noscript) -->";
+    } // if( !empty($google_tag_manager_id) ) {
+
 // ====================================================
 // Adding the after <body> tags
 // ====================================================
+
+// -------------------------------------
+// Add the code into the header code
+// -------------------------------------
+
+$yydev_tag_body_tag = $body_lazyload_code . $yydev_tag_body_tag;
 
 // ----------------------------------------------------
 // Adding the code if the theme not support after body tags
