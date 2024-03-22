@@ -174,7 +174,7 @@ function get_game($game_id = false, $fullsize = false, $preview = false, $fullsc
 							<div class="left">'. html_entity_decode($insertAds) .'</div>
 			  
 							<div class="right" style="margin-top: 20px">
-					  			<div class="skip-button">Skip in 5s</div>
+					  			<button class="skip-button">Skip in 5s</button>
 							</div>
 						</div>
 					</div>';

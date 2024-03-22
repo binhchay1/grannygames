@@ -31,7 +31,7 @@ function insert_ads_game_play()
 {
   if (is_single()) {
     add_action('wp_footer', 'add_script_for_insert_ads', 100);
-    // add_action('wp_head', 'add_style_for_insert_ads', 100);
+    add_action('wp_head', 'add_style_for_insert_ads', 100);
   }
 }
 add_action('wp', 'insert_ads_game_play');
@@ -39,53 +39,14 @@ add_action('wp', 'insert_ads_game_play');
 function add_style_for_insert_ads()
 {
   echo '<style>
-  .page-content {
-    font-family: "Roboto", sans-serif;
-    margin: 0 auto;
+  .right {
+    margin: 20px auto;
+    width: 300px;
   }
-  
-  .page-content p {
-    line-height: 2;
-  }
-  
-  .popup-overlay {
-    opacity: 0;
-    transition: all 700ms ease;
-  }
-  
-  .popup-overlay.active {
-    opacity: 1;
-  }
-  
-  .popup-overlay.active .popup-container {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .popup-overlay.active .left .bg-1,
-  .popup-overlay.active .left .bg-2 {
-    transform: translateX(0);
-  }
-  
-  .popup-container,
-  .popup-container * {
-    box-sizing: border-box;
-  }
-  
-  .popup-container .right {
-    padding: 20px;
-    padding-left: 250px;
-  }
-  
-  .popup-container .skip-button {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: #000;
-    padding: 2px 6px;
-    font-size: 14px;
-    cursor: pointer;
+
+  .skip-button {
+    padding: 5px 10px;
+    border: none;
   }
   </style>';
 }
