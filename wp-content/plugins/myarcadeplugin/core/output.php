@@ -167,17 +167,7 @@ function get_game($game_id = false, $fullsize = false, $preview = false, $fullsc
 					$gamewidth = (!empty($gamewidth)) ? 'width="' . $gamewidth . '"' : '100%';
 					$gameheight = (!empty($gameheight)) ? 'height="' . $gameheight . '"' : '100%';
 					$parameters = apply_filters('myarcade_iframe_parameters', 'frameborder="0" scrolling="no" allowfullscreen="true"', $game_id);
-					$insertAds = get_option('insert_ads_game_play');
-					$code = '<iframe id="playframe" ' . $gamewidth . ' ' . $gameheight . ' ' . $parameters . ' src="' . $game_url . '" ></iframe>
-					<div class="popup-overlay">
-						<div class="popup-container">
-							<div class="left">'. html_entity_decode($insertAds) .'</div>
-			  
-							<div class="right" style="margin-top: 20px">
-					  			<button class="skip-button">Skip in 5s</button>
-							</div>
-						</div>
-					</div>';
+					$code = '<iframe id="playframe" ' . $gamewidth . ' ' . $gameheight . ' ' . $parameters . ' src="' . $game_url . '" ></iframe>';
 					break;
 
 				case 'unity':
