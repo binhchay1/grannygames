@@ -89,16 +89,45 @@ function add_script_for_insert_ads()
   echo '
     <script>
     var iframe = jQuery("#playframe");
-    var 
     if(iframe.length) {
-      var parent = iframe.parent();
-      var widthParent = parent.width();
-      var heightParent = parent.height();
       var offset = iframe.offset();
       var popup = jQuery(".popup-overlay");
-  
-      popup.css("left", offset.left);
-      popup.css("top", offset.top);
+      const isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+      };
+
+      if(isMobile.any()) {
+        popup.css("left", offset.left);
+        popup.css("top", offset.top);
+      } else {
+        var widthIframe = iframe.width();
+        var heightIframe = iframe.height();
+        var widthPopup = popup.width();
+        var heightPopup = popup.height();
+        
+        var setLeft = offset.left + (widthIframe / 2) - (widthPopup / 2);
+        var setTop = offset.top + (heightIframe / 2) - (heightPopup / 2);
+    
+        popup.css("left", setLeft);
+        popup.css("top", setTop);
+      }
       
       const popupOverlay = document.querySelector(".popup-overlay");
       const skipButton = jQuery(".skip-button");
